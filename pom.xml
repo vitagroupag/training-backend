@@ -35,7 +35,7 @@
         <dependency>
             <groupId>com.github.ehrbase.openEHR_SDK</groupId>
             <artifactId>aql</artifactId>
-            <version>7202c96</version>
+            <version>e6cd2c0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

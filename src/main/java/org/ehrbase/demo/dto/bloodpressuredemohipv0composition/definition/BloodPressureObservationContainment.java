@@ -14,12 +14,20 @@ import org.ehrbase.client.classgenerator.shareddefinition.NullFlavour;
 import java.time.temporal.TemporalAccessor;
 
 public class BloodPressureObservationContainment extends Containment {
-  public SelectAqlField<BloodPressureObservation> BLOOD_PRESSURE_OBSERVATION =
+  public AqlFieldImp<BloodPressureObservation> BLOOD_PRESSURE_OBSERVATION =
       new AqlFieldImp<BloodPressureObservation>(
           BloodPressureObservation.class,
           "",
           "BloodPressureObservation",
           BloodPressureObservation.class,
+          this);
+
+  public AqlFieldImp<Double> SYSTOLIC_MAGNITUDE =
+      new AqlFieldImp<>(
+          BloodPressureObservation.class,
+          "/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/magnitude",
+          "systolicMagnitude",
+          Double.class,
           this);
 
   public ListSelectAqlField<BloodPressureAnyEventPointEvent> ANY_EVENT =
