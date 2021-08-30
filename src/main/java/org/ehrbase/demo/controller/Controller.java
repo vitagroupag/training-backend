@@ -11,7 +11,8 @@ import org.ehrbase.client.aql.orderby.OrderByExpression;
 import org.ehrbase.client.aql.query.EntityQuery;
 import org.ehrbase.client.aql.query.Query;
 import org.ehrbase.client.aql.record.Record;
-import org.ehrbase.client.aql.record.Record4;
+import org.ehrbase.client.aql.record.Record5;
+import org.ehrbase.client.classgenerator.shareddefinition.Setting;
 import org.ehrbase.client.flattener.Flattener;
 import org.ehrbase.client.openehrclient.OpenEhrClient;
 import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.BloodpressureDemoHipV0Composition;
@@ -26,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.temporal.TemporalAccessor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,12 +57,9 @@ public class Controller {
         convert(templateId, content, BloodpressureDemoHipV0Composition.class);
 
     dto.setComposer(new PartyIdentified(null, "MD. House", null));
+    dto.setSettingDefiningCode(Setting.PRIMARY_MEDICAL_CARE);
 
-    stopWatch.reset();
-    stopWatch.start();
     client.compositionEndpoint(ehrId).mergeCompositionEntity(dto);
-    stopWatch.stop();
-    System.out.println("Time Elapsed save: " + stopWatch.getTime());
 
     return ResponseEntity.ok().build();
   }
@@ -72,16 +71,17 @@ public class Controller {
     // Find all Documents
     CompositionContainment compositionContainment = CompositionContainment.getInstance();
 
-    // Containing
+    // Containing aOBSERVATION[openEHR-EHR-OBSERVATION.blood_pressure.v2]
     BloodPressureObservationContainment ObservationContainment =
         BloodPressureObservationContainment.getInstance();
     compositionContainment.setContains(ObservationContainment);
 
-    EntityQuery<Record4<String, String, CuffSizeDefiningCode, Double>> query =
+    EntityQuery<Record5<String, String, TemporalAccessor, CuffSizeDefiningCode, Double>> query =
         Query.buildEntityQuery(
             compositionContainment,
             compositionContainment.TEMPLATE_ID,
             compositionContainment.UID,
+            ObservationContainment.TIME_VALUE,
             ObservationContainment.CUFF_SIZE_DEFINING_CODE,
             ObservationContainment.SYSTOLIC_MAGNITUDE);
 
@@ -89,7 +89,7 @@ public class Controller {
 
     query.orderBy(OrderByExpression.ascending(ObservationContainment.SYSTOLIC_MAGNITUDE));
 
-    List<Record4<String, String, CuffSizeDefiningCode, Double>> result =
+    List<Record5<String, String, TemporalAccessor, CuffSizeDefiningCode, Double>> result =
         client.aqlEndpoint().execute(query);
 
     return ResponseEntity.ok(result.stream().map(this::toMap).collect(Collectors.toList()));
@@ -111,18 +111,10 @@ public class Controller {
         new FlatJasonProvider(fileBasedTemplateProvider)
             .buildFlatJson(FlatFormat.SIM_SDT, templateId);
 
-    stopWatch.reset();
-    stopWatch.start();
     Composition composition = flatJson.unmarshal(content, Composition.class);
-    stopWatch.stop();
-    System.out.println("Time Elapsed Flat to Composition: " + stopWatch.getTime());
 
-    stopWatch.reset();
-    stopWatch.start();
     BloodpressureDemoHipV0Composition flatten =
         new Flattener(fileBasedTemplateProvider).flatten(composition, clazz);
-    stopWatch.stop();
-    System.out.println("Time Elapsed Composition to dto: " + stopWatch.getTime());
     return flatten;
   }
 }

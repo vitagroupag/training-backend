@@ -30,6 +30,14 @@ public class BloodPressureObservationContainment extends Containment {
           Double.class,
           this);
 
+  public SelectAqlField<TemporalAccessor> TIME_VALUE =
+      new AqlFieldImp<TemporalAccessor>(
+          BloodPressureObservation.class,
+          "/data[at0001]/events[at0006]/time|value",
+          "timeValue",
+          TemporalAccessor.class,
+          this);
+
   public ListSelectAqlField<BloodPressureAnyEventPointEvent> ANY_EVENT =
       new ListAqlFieldImp<BloodPressureAnyEventPointEvent>(
           BloodPressureObservation.class,
