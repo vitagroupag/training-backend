@@ -24,7 +24,7 @@ import java.util.Optional;
 @Configuration
 public class SDKConfiguration {
 
-  private static final String OPEN_EHR_URL = "http://localhost:8080/ehrbase/";
+  private static final String OPEN_EHR_URL = "https://8080-vitagroupag-ehrbasework-t1fh372phfw.ws-eu96b.gitpod.io/ehrbase/";
 
   @Bean
   public TemplateProvider getTemplateProvider() {

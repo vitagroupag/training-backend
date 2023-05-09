@@ -1,6 +1,8 @@
 package org.ehrbase.demo;
 
 import com.nedap.archie.rm.generic.PartyIdentified;
+import com.nedap.archie.rm.generic.PartySelf;
+
 import org.ehrbase.client.classgenerator.shareddefinition.Language;
 import org.ehrbase.client.classgenerator.shareddefinition.Setting;
 import org.ehrbase.client.classgenerator.shareddefinition.Territory;
@@ -25,7 +27,7 @@ import java.util.UUID;
 
 public class DemoAppTest {
 
-  private static final String OPEN_EHR_URL = "http://localhost:8080/ehrbase/";
+  private static final String OPEN_EHR_URL = "https://8080-vitagroupag-ehrbasework-bprk1vlygjo.ws-eu96b.gitpod.io/ehrbase/";
 
   @Test
   public void Test() throws URISyntaxException {
@@ -53,17 +55,19 @@ public class DemoAppTest {
 
     dto.setBloodPressure(new BloodPressureObservation());
     dto.getBloodPressure().setCuffSizeDefiningCode(CuffSizeDefiningCode.PAEDIATRIC_CHILD);
+    dto.getBloodPressure().setSubject(new PartySelf());     
 
     BloodPressureAnyEventPointEvent measurement = new BloodPressureAnyEventPointEvent();
 
     measurement.setSystolicMagnitude(22d);
     measurement.setSystolicUnits("mm[Hg]");
+    
 
     dto.getBloodPressure().setAnyEvent(Collections.singletonList(measurement));
 
     VersionUid versionUid =
         client
-            .compositionEndpoint(UUID.fromString("45a15a72-75f8-4aac-91ba-61e35edacc4e"))
+            .compositionEndpoint(UUID.fromString("2b2f6ca4-888a-423a-b94d-0a0dbed32641"))
             .mergeCompositionEntity(dto)
             .getVersionUid();
     System.out.println(versionUid);

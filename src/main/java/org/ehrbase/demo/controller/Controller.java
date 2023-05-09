@@ -2,6 +2,8 @@ package org.ehrbase.demo.controller;
 
 import com.nedap.archie.rm.composition.Composition;
 import com.nedap.archie.rm.generic.PartyIdentified;
+import com.nedap.archie.rm.generic.PartySelf;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.time.StopWatch;
 import org.ehrbase.client.aql.condition.Condition;
@@ -12,6 +14,7 @@ import org.ehrbase.client.aql.query.EntityQuery;
 import org.ehrbase.client.aql.query.Query;
 import org.ehrbase.client.aql.record.Record;
 import org.ehrbase.client.aql.record.Record5;
+import org.ehrbase.client.classgenerator.interfaces.CompositionEntity;
 import org.ehrbase.client.classgenerator.shareddefinition.Setting;
 import org.ehrbase.client.flattener.Flattener;
 import org.ehrbase.client.openehrclient.OpenEhrClient;
@@ -19,6 +22,7 @@ import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.BloodpressureDemoH
 import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.CompositionContainment;
 import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.definition.BloodPressureObservationContainment;
 import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.definition.CuffSizeDefiningCode;
+import org.ehrbase.demo.dto.koerpertemperaturcomposition.KoerpertemperaturComposition;
 import org.ehrbase.serialisation.flatencoding.FlatFormat;
 import org.ehrbase.serialisation.flatencoding.FlatJasonProvider;
 import org.ehrbase.serialisation.flatencoding.FlatJson;
@@ -35,7 +39,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin
 @RequestMapping(
     path = "/rest/ecis/v1/composition",
     produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -53,14 +56,14 @@ public class Controller {
       @RequestParam(value = "ehrId") UUID ehrId,
       @RequestBody String content) {
 
-    BloodpressureDemoHipV0Composition dto =
-        convert(templateId, content, BloodpressureDemoHipV0Composition.class);
+      KoerpertemperaturComposition dto = convert(templateId, content, KoerpertemperaturComposition.class);
 
-    dto.setComposer(new PartyIdentified(null, "MD. House", null));
+    dto.setComposer(new PartyIdentified(null, "MD. Dorian", null));
     dto.setSettingDefiningCode(Setting.PRIMARY_MEDICAL_CARE);
+    dto.getKoerpertemperatur().setSubject(new PartySelf());    
 
     client.compositionEndpoint(ehrId).mergeCompositionEntity(dto);
-
+  
     return ResponseEntity.ok().build();
   }
 
@@ -105,15 +108,15 @@ public class Controller {
     return map;
   }
 
-  private BloodpressureDemoHipV0Composition convert(
-      String templateId, String content, Class<BloodpressureDemoHipV0Composition> clazz) {
+  private KoerpertemperaturComposition convert(
+      String templateId, String content, Class<KoerpertemperaturComposition> clazz) {
     FlatJson flatJson =
         new FlatJasonProvider(fileBasedTemplateProvider)
             .buildFlatJson(FlatFormat.SIM_SDT, templateId);
 
     Composition composition = flatJson.unmarshal(content, Composition.class);
 
-    BloodpressureDemoHipV0Composition flatten =
+    KoerpertemperaturComposition flatten =
         new Flattener(fileBasedTemplateProvider).flatten(composition, clazz);
     return flatten;
   }
