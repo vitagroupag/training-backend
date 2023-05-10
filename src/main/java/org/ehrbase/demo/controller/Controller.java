@@ -13,16 +13,14 @@ import org.ehrbase.client.aql.orderby.OrderByExpression;
 import org.ehrbase.client.aql.query.EntityQuery;
 import org.ehrbase.client.aql.query.Query;
 import org.ehrbase.client.aql.record.Record;
-import org.ehrbase.client.aql.record.Record5;
-import org.ehrbase.client.classgenerator.interfaces.CompositionEntity;
+import org.ehrbase.client.aql.record.Record3;
 import org.ehrbase.client.classgenerator.shareddefinition.Setting;
 import org.ehrbase.client.flattener.Flattener;
 import org.ehrbase.client.openehrclient.OpenEhrClient;
-import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.BloodpressureDemoHipV0Composition;
 import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.CompositionContainment;
-import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.definition.BloodPressureObservationContainment;
-import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.definition.CuffSizeDefiningCode;
 import org.ehrbase.demo.dto.vitalsignscomposition.VitalSignsComposition;
+import org.ehrbase.demo.dto.vitalsignscomposition.definition.BloodPressureObservation;
+import org.ehrbase.demo.dto.vitalsignscomposition.definition.BloodPressureObservationContainment;
 import org.ehrbase.serialisation.flatencoding.FlatFormat;
 import org.ehrbase.serialisation.flatencoding.FlatJasonProvider;
 import org.ehrbase.serialisation.flatencoding.FlatJson;
@@ -75,7 +73,8 @@ public class Controller {
   public ResponseEntity<List<Map<String, Object>>> list(
       @PathVariable(value = "ehr_id") UUID ehrId) {
 
-    // Find all Documents
+         
+     // Find all Documents
     CompositionContainment compositionContainment = CompositionContainment.getInstance();
 
     // Containing aOBSERVATION[openEHR-EHR-OBSERVATION.blood_pressure.v2]
@@ -83,20 +82,16 @@ public class Controller {
         BloodPressureObservationContainment.getInstance();
     compositionContainment.setContains(ObservationContainment);
 
-    EntityQuery<Record5<String, String, TemporalAccessor, CuffSizeDefiningCode, Double>> query =
+    EntityQuery<Record3<String, String, BloodPressureObservation>> query =
         Query.buildEntityQuery(
             compositionContainment,
             compositionContainment.TEMPLATE_ID,
             compositionContainment.UID,
-            ObservationContainment.TIME_VALUE,
-            ObservationContainment.CUFF_SIZE_DEFINING_CODE,
-            ObservationContainment.SYSTOLIC_MAGNITUDE);
+            ObservationContainment.BLOOD_PRESSURE_OBSERVATION);
 
     query.where(Condition.equal(EhrFields.EHR_ID(), ehrId));
 
-    query.orderBy(OrderByExpression.ascending(ObservationContainment.SYSTOLIC_MAGNITUDE));
-
-    List<Record5<String, String, TemporalAccessor, CuffSizeDefiningCode, Double>> result =
+    List<Record3<String, String, BloodPressureObservation>> result =
         client.aqlEndpoint().execute(query);
 
     return ResponseEntity.ok(result.stream().map(this::toMap).collect(Collectors.toList()));
