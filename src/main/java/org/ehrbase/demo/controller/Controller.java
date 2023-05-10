@@ -22,7 +22,7 @@ import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.BloodpressureDemoH
 import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.CompositionContainment;
 import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.definition.BloodPressureObservationContainment;
 import org.ehrbase.demo.dto.bloodpressuredemohipv0composition.definition.CuffSizeDefiningCode;
-import org.ehrbase.demo.dto.koerpertemperaturcomposition.KoerpertemperaturComposition;
+import org.ehrbase.demo.dto.vitalsignscomposition.VitalSignsComposition;
 import org.ehrbase.serialisation.flatencoding.FlatFormat;
 import org.ehrbase.serialisation.flatencoding.FlatJasonProvider;
 import org.ehrbase.serialisation.flatencoding.FlatJson;
@@ -56,11 +56,14 @@ public class Controller {
       @RequestParam(value = "ehrId") UUID ehrId,
       @RequestBody String content) {
 
-      KoerpertemperaturComposition dto = convert(templateId, content, KoerpertemperaturComposition.class);
+      VitalSignsComposition dto = convert(templateId, content, VitalSignsComposition.class);
 
     dto.setComposer(new PartyIdentified(null, "MD. Dorian", null));
     dto.setSettingDefiningCode(Setting.PRIMARY_MEDICAL_CARE);
-    dto.getKoerpertemperatur().setSubject(new PartySelf());    
+    dto.getBodyTemperature().setSubject(new PartySelf());    
+    dto.getBloodPressure().setSubject(new PartySelf()); 
+    
+    dto.setReportIdValue("123456");
 
     client.compositionEndpoint(ehrId).mergeCompositionEntity(dto);
   
@@ -108,15 +111,15 @@ public class Controller {
     return map;
   }
 
-  private KoerpertemperaturComposition convert(
-      String templateId, String content, Class<KoerpertemperaturComposition> clazz) {
+  private VitalSignsComposition convert(
+      String templateId, String content, Class<VitalSignsComposition> clazz) {
     FlatJson flatJson =
         new FlatJasonProvider(fileBasedTemplateProvider)
             .buildFlatJson(FlatFormat.SIM_SDT, templateId);
 
     Composition composition = flatJson.unmarshal(content, Composition.class);
 
-    KoerpertemperaturComposition flatten =
+    VitalSignsComposition flatten =
         new Flattener(fileBasedTemplateProvider).flatten(composition, clazz);
     return flatten;
   }

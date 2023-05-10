@@ -1,4 +1,4 @@
-package org.ehrbase.demo.dto.koerpertemperaturcomposition;
+package org.ehrbase.demo.dto.vitalsignscomposition;
 
 import com.nedap.archie.rm.archetyped.FeederAudit;
 import com.nedap.archie.rm.datastructures.Cluster;
@@ -21,115 +21,129 @@ import org.ehrbase.client.classgenerator.shareddefinition.NullFlavour;
 import org.ehrbase.client.classgenerator.shareddefinition.Setting;
 import org.ehrbase.client.classgenerator.shareddefinition.Territory;
 import org.ehrbase.client.openehrclient.VersionUid;
-import org.ehrbase.demo.dto.koerpertemperaturcomposition.definition.GeccoKoerpertemperaturKategorieElement;
-import org.ehrbase.demo.dto.koerpertemperaturcomposition.definition.KoerpertemperaturObservation;
-import org.ehrbase.demo.dto.koerpertemperaturcomposition.definition.StatusDefiningCode;
+import org.ehrbase.demo.dto.vitalsignscomposition.definition.BloodPressureObservation;
+import org.ehrbase.demo.dto.vitalsignscomposition.definition.BodyTemperatureObservation;
 
 @Entity
-@Archetype("openEHR-EHR-COMPOSITION.registereintrag.v1")
+@Archetype("openEHR-EHR-COMPOSITION.report.v1")
 @Generated(
     value = "org.ehrbase.client.classgenerator.ClassGenerator",
-    date = "2023-05-07T18:23:12.458144865Z",
+    date = "2023-05-10T09:56:55.549180217Z",
     comments = "https://github.com/ehrbase/openEHR_SDK Version: 1.26.0"
 )
-@Template("Koerpertemperatur")
-public class KoerpertemperaturComposition implements CompositionEntity {
+@Template("vital_signs")
+public class VitalSignsComposition implements CompositionEntity {
   /**
-   * Path: GECCO_Koerpertemperatur/category
+   * Path: vital_signs/category
    */
   @Path("/category|defining_code")
   private Category categoryDefiningCode;
 
   /**
-   * Path: GECCO_Koerpertemperatur/context/Erweiterung
-   * Description: Ergänzende Angaben zum Registereintrag.
+   * Path: vital_signs/context/Report ID
+   * Description: Identification information about the report.
    */
-  @Path("/context/other_context[at0001]/items[at0002]")
-  private List<Cluster> erweiterung;
+  @Path("/context/other_context[at0001]/items[at0002]/value|value")
+  private String reportIdValue;
 
   /**
-   * Path: GECCO_Koerpertemperatur/context/Status
-   * Description: Status der gelieferten Daten für den Registereintrag. Hinweis: Dies ist nicht der Status einzelner Komponenten.
+   * Path: vital_signs/context/Tree/Report ID/null_flavour
    */
-  @Path("/context/other_context[at0001]/items[at0004]/value|defining_code")
-  private StatusDefiningCode statusDefiningCode;
+  @Path("/context/other_context[at0001]/items[at0002]/null_flavour|defining_code")
+  private NullFlavour reportIdNullFlavourDefiningCode;
 
   /**
-   * Path: GECCO_Koerpertemperatur/context/Baum/Status/null_flavour
+   * Path: vital_signs/context/Status
+   * Description: The status of the entire report. Note: This is not the status of any of the report components.
    */
-  @Path("/context/other_context[at0001]/items[at0004]/null_flavour|defining_code")
+  @Path("/context/other_context[at0001]/items[at0005]/value|value")
+  private String statusValue;
+
+  /**
+   * Path: vital_signs/context/Tree/Status/null_flavour
+   */
+  @Path("/context/other_context[at0001]/items[at0005]/null_flavour|defining_code")
   private NullFlavour statusNullFlavourDefiningCode;
 
   /**
-   * Path: GECCO_Koerpertemperatur/context/Kategorie
-   * Description: Die Klassifikation des Registereintrags (z.B. Typ der Observation des FHIR-Profils).
+   * Path: vital_signs/context/Extension
+   * Description: Additional information required to capture local context or to align with other reference models/formalisms.
+   * Comment: For example: local information requirements or additional metadata to align with FHIR or CIMI equivalents.
    */
-  @Path("/context/other_context[at0001]/items[at0005]")
-  private List<GeccoKoerpertemperaturKategorieElement> kategorie;
+  @Path("/context/other_context[at0001]/items[at0006]")
+  private List<Cluster> extension;
 
   /**
-   * Path: GECCO_Koerpertemperatur/context/start_time
+   * Path: vital_signs/context/start_time
    */
   @Path("/context/start_time|value")
   private TemporalAccessor startTimeValue;
 
   /**
-   * Path: GECCO_Koerpertemperatur/context/participations
+   * Path: vital_signs/context/participations
    */
   @Path("/context/participations")
   private List<Participation> participations;
 
   /**
-   * Path: GECCO_Koerpertemperatur/context/end_time
+   * Path: vital_signs/context/end_time
    */
   @Path("/context/end_time|value")
   private TemporalAccessor endTimeValue;
 
   /**
-   * Path: GECCO_Koerpertemperatur/context/location
+   * Path: vital_signs/context/location
    */
   @Path("/context/location")
   private String location;
 
   /**
-   * Path: GECCO_Koerpertemperatur/context/health_care_facility
+   * Path: vital_signs/context/health_care_facility
    */
   @Path("/context/health_care_facility")
   private PartyIdentified healthCareFacility;
 
   /**
-   * Path: GECCO_Koerpertemperatur/context/setting
+   * Path: vital_signs/context/setting
    */
   @Path("/context/setting|defining_code")
   private Setting settingDefiningCode;
 
   /**
-   * Path: GECCO_Koerpertemperatur/Koerpertemperatur
-   * Description: Eine Messung der Körpertemperatur, als Surrogat für die Temperatur des gesamten Körper der Person.
+   * Path: vital_signs/Blood pressure
+   * Description: The local measurement of arterial blood pressure which is a surrogate for arterial pressure in the systemic circulation.
+   * Comment: Most commonly, use of the term 'blood pressure' refers to measurement of brachial artery pressure in the upper arm.
    */
-  @Path("/content[openEHR-EHR-OBSERVATION.body_temperature.v2 and name/value='Koerpertemperatur']")
-  private KoerpertemperaturObservation koerpertemperatur;
+  @Path("/content[openEHR-EHR-OBSERVATION.blood_pressure.v2]")
+  private BloodPressureObservation bloodPressure;
 
   /**
-   * Path: GECCO_Koerpertemperatur/composer
+   * Path: vital_signs/Body temperature
+   * Description: A measurement of the body temperature, which is a surrogate for the core body temperature of the individual.
+   */
+  @Path("/content[openEHR-EHR-OBSERVATION.body_temperature.v2]")
+  private BodyTemperatureObservation bodyTemperature;
+
+  /**
+   * Path: vital_signs/composer
    */
   @Path("/composer")
   private PartyProxy composer;
 
   /**
-   * Path: GECCO_Koerpertemperatur/language
+   * Path: vital_signs/language
    */
   @Path("/language")
   private Language language;
 
   /**
-   * Path: GECCO_Koerpertemperatur/feeder_audit
+   * Path: vital_signs/feeder_audit
    */
   @Path("/feeder_audit")
   private FeederAudit feederAudit;
 
   /**
-   * Path: GECCO_Koerpertemperatur/territory
+   * Path: vital_signs/territory
    */
   @Path("/territory")
   private Territory territory;
@@ -145,20 +159,28 @@ public class KoerpertemperaturComposition implements CompositionEntity {
      return this.categoryDefiningCode ;
   }
 
-  public void setErweiterung(List<Cluster> erweiterung) {
-     this.erweiterung = erweiterung;
+  public void setReportIdValue(String reportIdValue) {
+     this.reportIdValue = reportIdValue;
   }
 
-  public List<Cluster> getErweiterung() {
-     return this.erweiterung ;
+  public String getReportIdValue() {
+     return this.reportIdValue ;
   }
 
-  public void setStatusDefiningCode(StatusDefiningCode statusDefiningCode) {
-     this.statusDefiningCode = statusDefiningCode;
+  public void setReportIdNullFlavourDefiningCode(NullFlavour reportIdNullFlavourDefiningCode) {
+     this.reportIdNullFlavourDefiningCode = reportIdNullFlavourDefiningCode;
   }
 
-  public StatusDefiningCode getStatusDefiningCode() {
-     return this.statusDefiningCode ;
+  public NullFlavour getReportIdNullFlavourDefiningCode() {
+     return this.reportIdNullFlavourDefiningCode ;
+  }
+
+  public void setStatusValue(String statusValue) {
+     this.statusValue = statusValue;
+  }
+
+  public String getStatusValue() {
+     return this.statusValue ;
   }
 
   public void setStatusNullFlavourDefiningCode(NullFlavour statusNullFlavourDefiningCode) {
@@ -169,12 +191,12 @@ public class KoerpertemperaturComposition implements CompositionEntity {
      return this.statusNullFlavourDefiningCode ;
   }
 
-  public void setKategorie(List<GeccoKoerpertemperaturKategorieElement> kategorie) {
-     this.kategorie = kategorie;
+  public void setExtension(List<Cluster> extension) {
+     this.extension = extension;
   }
 
-  public List<GeccoKoerpertemperaturKategorieElement> getKategorie() {
-     return this.kategorie ;
+  public List<Cluster> getExtension() {
+     return this.extension ;
   }
 
   public void setStartTimeValue(TemporalAccessor startTimeValue) {
@@ -225,12 +247,20 @@ public class KoerpertemperaturComposition implements CompositionEntity {
      return this.settingDefiningCode ;
   }
 
-  public void setKoerpertemperatur(KoerpertemperaturObservation koerpertemperatur) {
-     this.koerpertemperatur = koerpertemperatur;
+  public void setBloodPressure(BloodPressureObservation bloodPressure) {
+     this.bloodPressure = bloodPressure;
   }
 
-  public KoerpertemperaturObservation getKoerpertemperatur() {
-     return this.koerpertemperatur ;
+  public BloodPressureObservation getBloodPressure() {
+     return this.bloodPressure ;
+  }
+
+  public void setBodyTemperature(BodyTemperatureObservation bodyTemperature) {
+     this.bodyTemperature = bodyTemperature;
+  }
+
+  public BodyTemperatureObservation getBodyTemperature() {
+     return this.bodyTemperature ;
   }
 
   public void setComposer(PartyProxy composer) {

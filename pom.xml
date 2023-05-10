@@ -35,7 +35,7 @@
                 <!-- mandatory to have at least one template file configured -->
                 <templateFiles>
                     <templateFile>/workspace/training-backend/template/bloodpressure-demo.hip.v0.opt</templateFile>
-                    <templateFile>/workspace/training-backend/template/Koerpertemperatur.opt</templateFile>
+                    <templateFile>/workspace/training-backend/template/vital_signs_simple.opt</templateFile>
                 </templateFiles>
                 <!-- mandatory -->
                 <packageName>org.ehrbase.demo.dto</packageName>
