@@ -58,6 +58,7 @@ public class Controller {
 
       VitalSignsComposition dto = convert(templateId, content, VitalSignsComposition.class);
 
+      System.out.println("test");
     dto.setComposer(new PartyIdentified(null, "MD. Dorian", null));
     dto.setSettingDefiningCode(Setting.PRIMARY_MEDICAL_CARE);
     dto.getBodyTemperature().setSubject(new PartySelf());    
